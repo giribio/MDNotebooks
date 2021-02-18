@@ -2,7 +2,13 @@ Molecular Dynamics made easy with Jupyter Notebook.
 
 All the Gromacs commands, result analysis, plotting could be carried out using single Jupyter Notebook with the support of Gromacs software and other python libraries.
 
+Please contact me for the updated notebook and supporting files.
 
+Email: pillai @ nyroindia.org (remove spaces)
+
+Please include your name, affliation, purpose of usage!
+
+Thanks!
 
 Tutorials are taken from
 
