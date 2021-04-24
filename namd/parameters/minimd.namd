@@ -1,0 +1,102 @@
+# customised by giribio
+# ----------input-----
+
+coordinates             solvate.pdb
+structure               solvate.psf
+parameters              charmmtoppar/par_all22_prot.prm
+parameters              charmmtoppar/par_all35_ethers.prm
+parameters              charmmtoppar/par_all36_na.prm
+parameters              charmmtoppar/par_all36m_prot.prm
+parameters              charmmtoppar/par_all36_cgenff.prm
+parameters              charmmtoppar/par_all36_carb.prm
+parameters              charmmtoppar/par_all36_lipid.prm
+parameters              charmmtoppar/par_all36_prot.prm
+#parameters		        ligandrm.str
+parameters		        toppar/lig.prm
+parameters		        readcharmmpar1.3/toppar_water_ions_namd.str
+paratypecharmm          on
+#bincoordinates         minimized.restart.coor
+#binvelocities          minimized.restart.vel
+
+# ----------output------
+
+set output              output
+
+outputname              $output
+dcdfile                 ${output}.dcd
+xstFile                 ${output}.xst
+dcdfreq                 50
+xstFreq                 50
+binaryoutput            yes
+binaryrestart           yes
+outputEnergies          50
+restartfreq             50
+
+
+# ---------Basic dynamics-------
+exclude                 scaled1-4
+1-4scaling              1
+COMmotion               no
+dielectric              1.0
+
+# --------Simulation space partitioning----
+switching               on
+switchdist              9
+cutoff                  10
+pairlistdist            11
+
+# --------Multiple time stepping----
+firsttimestep           0
+timestep                2
+stepspercycle   1
+
+# -------Temperature control----
+set temperature         310
+temperature             $temperature;  # initial temperature
+
+# -------Langevin Dynamics------
+langevin                on;            # do langevin dynamics
+langevinDamping         1;              # damping coefficient (gamma) of 1/ps
+langevinTemp            $temperature;   # bath temperature
+
+# ===============================================
+
+PME on
+PMEGridSizeX 100
+PMEGridSizeY 100
+PMEGridSizeZ 100
+
+# doesnt work with just pme
+
+useGroupPressure yes
+
+# with grouppressure, works better, holes still there
+
+LangevinPiston   on
+LangevinPistonTarget 1.02
+LangevinPistonPeriod 150
+LangevinPistonDecay  90
+LangevinPistonTemp  $temperature
+
+# with langevin piston, works!!! But slower.
+
+# ===============================================
+
+# Periodic Boundary conditions
+# copied data generated from maxmin.tcl
+
+cellBasisVector1 47.452 0 0 
+cellBasisVector2 0 36.978 0 
+cellBasisVector3 0 0 52.45 
+cellOrigin 12.619 6.041 3.729000000000001
+
+wrapWater           on              ;# wrap water to central cell
+wrapAll             on              ;# wrap other molecules too
+wrapNearest         off
+
+# ---------Scripting
+minimize            1000          ;# lower potential energy for 1000 steps
+reinitvels          $temperature  ;# since minimization zeros velocities
+run 500000;
+# customised by giribio
+# END
